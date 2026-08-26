@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>A Centralized Lost & Found - Politeknik Merlimau Melaka</title>
+    
+    <!-- Google Fonts Inter -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS Config initialized before script for iOS WebKit compatibility -->
+    <script>
+        window.tailwind = window.tailwind || {};
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                    },
+                    colors: {
+                        pmm: {
+                            50: '#f0f4ff',
+                            100: '#e0e8ff',
+                            600: '#1e40af',
+                            700: '#1d4ed8',
+                            800: '#1e3a8a',
+                            900: '#0f172a',
+                        },
+                        brand: {
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        html {
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f1f5f9;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+        }
+        /* iOS Safari Form Fixes */
+        input, select, textarea, button {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            font-family: inherit;
+        }
+        select {
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22293.4%22%20height%3D%22293.4%22%3E%3Cpath%20fill%3D%22%2364748B%22%20d%3D%22M201.4%2092.1L146.7%20146.8%2092%2092.1c-4.7-4.7-12.3-4.7-17%200-4.7%204.7-4.7%2012.3%200%2017l63.2%2063.2c2.3%202.3%205.4%203.6%208.5%203.6s6.2-1.3%208.5-3.6l63.2-63.2c4.7-4.7%204.7-12.3%200-17-4.7-4.7-12.3-4.7-17%200z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 0.85rem;
+            padding-right: 2rem !important;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .chat-bubble-user {
+            background-color: #1e40af;
+            color: white;
+            border-radius: 18px 18px 2px 18px;
+        }
+        .chat-bubble-other {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            border-radius: 18px 18px 18px 2px;
+        }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col min-h-screen">
+
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-40 bg-slate-900 text-white border-b border-slate-800 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row justify-between py-3 sm:py-0 sm:h-20 items-center gap-3 sm:gap-0">
+                <!-- PMM Logo & Branding -->
+                <div class="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
+                    <div class="flex items-center space-x-3">
+                        <div class="relative group cursor-pointer" onclick="document.getElementById('logo-file-input').click()" title="Klik untuk muat naik logo Politeknik Merlimau Melaka">
+                            <div id="logo-container" class="bg-slate-800 p-2 rounded-2xl border border-slate-700 flex items-center justify-center h-10 sm:h-12 min-w-[40px] sm:min-w-[48px] overflow-hidden hover:border-amber-400 transition-all shadow-md">
+                                <i id="logo-icon-default" class="fa-solid fa-graduation-cap text-xl sm:text-2xl text-amber-400"></i>
+                                <img id="custom-logo-img" class="hidden h-full w-full object-cover rounded-xl" alt="PMM Logo">
+                            </div>
+                            <span class="absolute -bottom-1 -right-1 bg-amber-500 text-slate-900 rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[9px] sm:text-[10px] shadow group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-camera"></i>
+                            </span>
+                            <input type="file" id="logo-file-input" accept="image/*" class="hidden" onchange="handleLogoUpload(event)">
+                        </div>
+                        <div>
+                            <div class="flex items-center space-x-1.5 sm:space-x-2">
+                                <span class="font-extrabold text-base sm:text-xl tracking-tight text-white leading-none">A Centralized Lost & Found</span>
+                                <span class="bg-amber-500/20 text-amber-300 text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full border border-amber-500/30 whitespace-nowrap">Pelajar & Pensyarah</span>
+                            </div>
+                            <span class="text-[10px] sm:text-xs text-slate-400 font-medium">Politeknik Merlimau Melaka (PMM) Hub</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center space-x-2 w-full sm:w-auto justify-stretch sm:justify-end">
+                    <button onclick="openReportModal('lost')" class="flex-1 sm:flex-none inline-flex items-center justify-center px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-red-500/20 text-red-300 border border-red-500/40 hover:bg-red-500/30 transition-all shadow-sm">
+                        <i class="fa-solid fa-circle-exclamation mr-1.5"></i>
+                        <span>Saya Hilang Barang</span>
+                    </button>
+                    <button onclick="openReportModal('found')" class="flex-1 sm:flex-none inline-flex items-center justify-center px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-emerald-600 text-white hover:bg-emerald-500 transition-all shadow-md">
+                        <i class="fa-solid fa-hand-holding-heart mr-1.5"></i>
+                        <span>Saya Jumpa Barang</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner for Politeknik Merlimau Melaka -->
+    <section class="bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white py-6 sm:py-8 px-4 sm:px-6 lg:px-8 border-b border-slate-700/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+                <div>
+                    <div class="inline-flex items-center space-x-2 bg-blue-500/10 border border-blue-500/20 rounded-full px-3 py-1 text-[11px] sm:text-xs text-blue-300 font-semibold mb-2.5">
+                        <i class="fa-solid fa-building-columns"></i>
+                        <span>Khas Warga Politeknik Merlimau Melaka</span>
+                    </div>
+                    <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight">Centralized Portal for Lost and Found Items</h1>
+                    <p class="text-slate-300 text-xs sm:text-sm mt-1.5 max-w-2xl leading-relaxed">
+                        Mudah & Selamat untuk Pelajar, Pensyarah & Staf PMM: Laporkan barang, muat naik gambar, mesej langsung penemu/pemilik, dan pantau status barang di lokasi Politeknik Merlimau Melaka.
+                    </p>
+                </div>
+
+                <!-- Live Campus Stats -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 w-full lg:w-auto">
+                    <div class="bg-slate-800/80 border border-slate-700/60 rounded-xl p-2.5 sm:p-3 text-center">
+                        <p class="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase">Keseluruhan</p>
+                        <p id="stat-total" class="text-base sm:text-lg font-extrabold text-white">0</p>
+                    </div>
+                    <div class="bg-slate-800/80 border border-slate-700/60 rounded-xl p-2.5 sm:p-3 text-center">
+                        <p class="text-[9px] sm:text-[10px] text-red-400 font-bold uppercase">Hilang</p>
+                        <p id="stat-lost" class="text-base sm:text-lg font-extrabold text-red-400">0</p>
+                    </div>
+                    <div class="bg-slate-800/80 border border-slate-700/60 rounded-xl p-2.5 sm:p-3 text-center">
+                        <p class="text-[9px] sm:text-[10px] text-blue-400 font-bold uppercase">Dijumpai</p>
+                        <p id="stat-found" class="text-base sm:text-lg font-extrabold text-blue-400">0</p>
+                    </div>
+                    <div class="bg-slate-800/80 border border-slate-700/60 rounded-xl p-2.5 sm:p-3 text-center">
+                        <p class="text-[9px] sm:text-[10px] text-emerald-400 font-bold uppercase">Selesai</p>
+                        <p id="stat-returned" class="text-base sm:text-lg font-extrabold text-emerald-400">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex-grow w-full">
+
+        <!-- Search, Filter & Tab Navigation -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-3.5 sm:p-4 mb-6 space-y-4">
+            
+            <div class="flex flex-col lg:flex-row gap-3 justify-between items-stretch lg:items-center">
+                <!-- Search Input -->
+                <div class="relative flex-grow">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs sm:text-sm"></i>
+                    <input type="text" id="search-input" placeholder="Cari barang, lokasi (Cth: Kafeteria, JTMK, Perpustakaan)..." 
+                        class="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-pmm-600 text-xs sm:text-sm">
+                </div>
+
+                <!-- Filters -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <select id="filter-type" class="px-3 py-2 sm:py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-pmm-600">
+                        <option value="all">Semua Jenis Laporan</option>
+                        <option value="lost">Barang Hilang</option>
+                        <option value="found">Barang Dijumpai</option>
+                    </select>
+
+                    <select id="filter-location" class="px-3 py-2 sm:py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-pmm-600">
+                        <option value="all">Semua Lokasi PMM</option>
+                        <option value="Perpustakaan Al-Khawarizmi PMM">Perpustakaan Al-Khawarizmi PMM</option>
+                        <option value="Kafeteria PMM">Kafeteria PMM</option>
+                        <option value="Dewan Platinum PMM">Dewan Platinum PMM</option>
+                        <option value="JKA">Jabatan Kejuruteraan Awam (JKA)</option>
+                        <option value="JKE">Jabatan Kejuruteraan Elektrik (JKE)</option>
+                        <option value="JKM">Jabatan Kejuruteraan Mekanikal (JKM)</option>
+                        <option value="JP">Jabatan Perdagangan (JP)</option>
+                        <option value="JPH">Jabatan Pelancongan & Hospitaliti (JPH)</option>
+                        <option value="JMSK">Jabatan Matematik, Sains & Komputer (JMSK)</option>
+                        <option value="Kamsis PMM">Kolej Kediaman (Kamsis PMM)</option>
+                        <option value="Pusat Sukan PMM">Pusat Sukan & Padang PMM</option>
+                        <option value="Pusat Islam PMM">Pusat Islam / Surau PMM</option>
+                        <option value="Kaunter HEP">Bangunan Pentadbiran / Kaunter HEP</option>
+                        <option value="Lain-lain">Lain-lain Lokasi di PMM</option>
+                    </select>
+
+                    <select id="filter-status" class="px-3 py-2 sm:py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-pmm-600">
+                        <option value="all">Semua Status Aktif</option>
+                        <option value="active">Masih Mencari / Belum Dituntut</option>
+                        <option value="hep">Di Kaunter HEP PMM</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- View Tabs (Horizontal Scrolling for Mobile Touch Devices) -->
+            <div class="flex border-b border-slate-200 pt-2 space-x-4 sm:space-x-6 text-xs sm:text-sm font-semibold overflow-x-auto custom-scrollbar whitespace-nowrap">
+                <button id="tab-grid-btn" onclick="switchTab('grid')" class="pb-3 border-b-2 border-pmm-600 text-pmm-600 flex items-center space-x-2 shrink-0">
+                    <i class="fa-solid fa-list-ul"></i>
+                    <span>Senarai Laporan Barang</span>
+                </button>
+                <button id="tab-match-btn" onclick="switchTab('match')" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center space-x-2 shrink-0">
+                    <i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i>
+                    <span>Padanan Automatik (Auto-Match)</span>
+                    <span id="match-badge" class="bg-amber-100 text-amber-700 text-[10px] px-2 py-0.5 rounded-full font-bold">0</span>
+                </button>
+                <button id="tab-history-btn" onclick="switchTab('history')" class="pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center space-x-2 shrink-0">
+                    <i class="fa-solid fa-receipt text-emerald-600"></i>
+                    <span>Rekod Pemulangan</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab 1: Grid Items View -->
+        <div id="grid-view" class="space-y-6">
+            <div id="items-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <!-- Dynamically populated via Javascript -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="hidden text-center py-16 bg-white rounded-2xl border border-dashed border-slate-300">
+                <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+                <h3 class="text-base font-bold text-slate-700">Tiada Laporan Ditemui</h3>
+                <p class="text-xs text-slate-500 max-w-sm mx-auto mt-1 mb-4">Cuba ubah penapis carian atau laporkan barang baru untuk warga PMM.</p>
+                <button onclick="resetFilters()" class="text-xs font-bold text-pmm-600 hover:underline">
+                    Set Semula Penapis
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab 2: Auto Match View -->
+        <div id="match-view" class="hidden space-y-4">
+            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start space-x-3">
+                <i class="fa-solid fa-robot text-amber-600 text-2xl mt-0.5"></i>
+                <div>
+                    <h3 class="font-bold text-amber-900 text-sm">Sistem Padanan Automatik PMM</h3>
+                    <p class="text-xs text-amber-800 mt-0.5">
+                        Sistem mengesan persamaan lokasi dan kata kunci antara barang **Hilang** dan **Dijumpai** untuk mempercepatkan proses penemuan semula.
+                    </p>
+                </div>
+            </div>
+
+            <div id="matches-container" class="space-y-4">
+                <!-- Auto matches populated via JS -->
+            </div>
+
+            <div id="no-matches-state" class="hidden text-center py-12 bg-white rounded-2xl border border-slate-200">
+                <p class="text-xs font-semibold text-slate-500">Tiada padanan baharu dikesan buat masa ini.</p>
+            </div>
+        </div>
+
+        <!-- Tab 3: Return Records / History View -->
+        <div id="history-view" class="hidden space-y-4">
+            <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-start space-x-3">
+                <i class="fa-solid fa-clipboard-check text-emerald-600 text-2xl mt-0.5"></i>
+                <div>
+                    <h3 class="font-bold text-emerald-900 text-sm">Rekod Rasmi Pemulangan Barang PMM</h3>
+                    <p class="text-xs text-emerald-800 mt-0.5">
+                        Di bawah adalah senarai barang yang telah berjaya disahkan dan dikembalikan kepada pemilik asal di Politeknik Merlimau Melaka.
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider">
+                                <th class="p-4">Barang</th>
+                                <th class="p-4">Lokasi Di PMK</th>
+                                <th class="p-4">Pemilik / Pelapor</th>
+                                <th class="p-4">Penemu / Pembantu</th>
+                                <th class="p-4">Tarikh Selesai</th>
+                                <th class="p-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-table-body" class="divide-y divide-slate-100">
+                            <!-- Populated via Javascript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MODAL 1: Laporkan Barang Baru (Hilang / Jumpa) -->
+    <div id="report-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center hidden p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-xl max-w-xl w-full max-h-[90vh] flex flex-col my-auto overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-900 text-white">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-pen-to-square text-amber-400"></i>
+                    <h3 id="modal-title" class="font-bold text-base">Borang Laporan Barang PMM</h3>
+                </div>
+                <button onclick="closeReportModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="report-form" onsubmit="handleReportSubmit(event)" class="p-6 overflow-y-auto custom-scrollbar space-y-4">
+                <input type="hidden" id="report-type" value="lost">
+
+                <!-- Type Pills -->
+                <div>
+                    <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1.5">Jenis Laporan *</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="button" id="btn-type-lost" onclick="setReportType('lost')" class="py-2 rounded-xl border text-xs font-bold transition-all flex items-center justify-center space-x-2 border-red-500 bg-red-50 text-red-600">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            <span>Barang Hilang</span>
+                        </button>
+                        <button type="button" id="btn-type-found" onclick="setReportType('found')" class="py-2 rounded-xl border text-xs font-bold transition-all flex items-center justify-center space-x-2 border-slate-200 text-slate-600">
+                            <i class="fa-solid fa-hand-holding-heart"></i>
+                            <span>Barang Dijumpai</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tajuk Barang -->
+                <div>
+                    <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1">Nama / Tajuk Barang *</label>
+                    <input type="text" id="report-title" required placeholder="Cth: Kad Pelajar Matrix / Pendrive SanDisk 32GB / Kunci Motor" 
+                        class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-pmm-600">
+                </div>
+
+                <!-- Lokasi PMM & Tarikh -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1">Lokasi Kejadian (PMM) *</label>
+                        <select id="report-location" required class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-pmm-600">
+                            <option value="">Pilih Lokasi Di PMM</option>
+                            <option value="Perpustakaan Al-Khawarizmi PMM">Perpustakaan Al-Khawarizmi PMM</option>
+                            <option value="Kafeteria PMM">Kafeteria PMM</option>
+                            <option value="Dewan Platinum PMM">Dewan Platinum PMM</option>
+                            <option value="JKA - Jabatan Kejuruteraan Awam">Jabatan Kejuruteraan Awam (JKA)</option>
+                            <option value="JKE - Jabatan Kejuruteraan Elektrik">Jabatan Kejuruteraan Elektrik (JKE)</option>
+                            <option value="JKM - Jabatan Kejuruteraan Mekanikal">Jabatan Kejuruteraan Mekanikal (JKM)</option>
+                            <option value="JP - Jabatan Perdagangan">Jabatan Perdagangan (JP)</option>
+                            <option value="JPH - Jabatan Pelancongan & Hospitaliti">Jabatan Pelancongan & Hospitaliti (JPH)</option>
+                            <option value="JMSK - Jabatan Matematik, Sains & Komputer">Jabatan Matematik, Sains & Komputer (JMSK)</option>
+                            <option value="Kamsis PMM">Kolej Kediaman (Kamsis PMM)</option>
+                            <option value="Pusat Sukan PMM">Pusat Sukan & Padang PMM</option>
+                            <option value="Pusat Islam PMM">Pusat Islam / Surau PMM</option>
+                            <option value="Kaunter HEP PMM">Diserahkan ke Kaunter HEP PMM</option>
+                            <option value="Lain-lain Lokasi PMM">Lain-lain Lokasi di PMM</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1">Tarikh Kejadian *</label>
+                        <input type="date" id="report-date" required class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-pmm-600">
+                    </div>
+                </div>
+
+                <!-- Muat Naik Gambar (File Upload Feature) -->
+                <div>
+                    <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1">Muat Naik Gambar Barang (Opsional)</label>
+                    <div class="flex items-center space-x-3">
+                        <label class="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 px-3.5 py-2 rounded-xl border border-slate-300 text-xs font-semibold flex items-center space-x-2">
+                            <i class="fa-solid fa-cloud-arrow-up text-pmm-600"></i>
+                            <span>Pilih Gambar Dari Peranti</span>
+                            <input type="file" id="report-image-file" accept="image/*" class="hidden" onchange="previewImageUpload(event)">
+                        </label>
+                        <span id="file-name-display" class="text-xs text-slate-400 italic">Tiada fail dipilih</span>
+                    </div>
+                    <!-- Image Preview Thumbnail -->
+                    <div id="image-preview-container" class="mt-2 hidden">
+                        <img id="image-preview" src="#" alt="Pratonton" class="h-24 w-auto rounded-lg border border-slate-200 object-cover shadow-sm">
+                    </div>
+                </div>
+
+                <!-- Keterangan Lanjut -->
+                <div>
+                    <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1">Keterangan / Ciri Unik *</label>
+                    <textarea id="report-desc" rows="3" required placeholder="Nyatakan warna, calar unik, nama kelas/kursus jika ada..." 
+                        class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-pmm-600"></textarea>
+                </div>
+
+                <!-- Maklumat Pelapor (No Telefon & Nama) -->
+                <div class="bg-blue-50/70 p-3.5 rounded-xl border border-blue-100 space-y-3">
+                    <h4 class="text-xs font-bold text-pmm-800 flex items-center">
+                        <i class="fa-solid fa-user-shield mr-1.5 text-pmm-600"></i> Maklumat Perhubungan Pelapor
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-extrabold uppercase text-slate-500 mb-1">Nama Pelapor *</label>
+                            <input type="text" id="report-reporter" required placeholder="Cth: Amirul (Pelajar) / Pn. Azlina (Pensyarah)" 
+                                class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-pmm-600">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-extrabold uppercase text-slate-500 mb-1">No. Telefon / WhatsApp *</label>
+                            <input type="tel" id="report-contact" required placeholder="01X-XXXXXXX" 
+                                class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-pmm-600">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-2 flex justify-end space-x-2">
+                    <button type="button" onclick="closeReportModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50">
+                        Batal
+                    </button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-pmm-600 text-white text-xs font-bold hover:bg-pmm-700 shadow-md">
+                        Hantar Laporan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: Detail Barang, WhatsApp & In-App Chat Messenger -->
+    <div id="detail-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center hidden p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full overflow-hidden my-auto flex flex-col max-h-[90vh]">
+            <div id="detail-modal-body" class="overflow-y-auto custom-scrollbar flex-grow">
+                <!-- Populated via Javascript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: Update Location, Date & Status Modal -->
+    <div id="edit-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center hidden p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden my-auto">
+            <div class="px-5 py-3 border-b border-slate-200 bg-slate-900 text-white flex justify-between items-center">
+                <h3 class="font-bold text-sm"><i class="fa-solid fa-pen-to-square mr-1.5 text-amber-400"></i>Kemaskini Status & Lokasi</h3>
+                <button onclick="closeEditModal()" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="edit-form" onsubmit="handleEditSubmit(event)" class="p-5 space-y-3">
+                <input type="hidden" id="edit-item-id">
+                
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-600 mb-1">Status Terkini Barang</label>
+                    <select id="edit-status" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold focus:ring-2 focus:ring-pmm-600">
+                        <option value="active">Masih Mencari / Belum Dituntut</option>
+                        <option value="hep">Disimpan di Kaunter HEP PMM</option>
+                        <option value="returned">Telah Selamat Dipulangkan (Selesai)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-600 mb-1">Kemaskini Lokasi Terkini di PMM</label>
+                    <input type="text" id="edit-location" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-pmm-600">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-600 mb-1">Kemaskini Tarikh Laporan / Penemuan</label>
+                    <input type="date" id="edit-date" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-pmm-600">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-600 mb-1">Nota Pemulangan / Catatan Tambahan</label>
+                    <textarea id="edit-note" rows="2" placeholder="Cth: Telah diserahkan kepada pemilik di Kafeteria disaksikan oleh Felo..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-pmm-600"></textarea>
+                </div>
+
+                <div class="pt-2 flex justify-end space-x-2">
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 border rounded-xl text-xs font-semibold text-slate-600">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-pmm-600 text-white rounded-xl text-xs font-bold hover:bg-pmm-700">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+    <script>
+        // Data Store pre-populated with Politeknik Merlimau Melaka Campus Specific Data (Only 1 sample item)
+        let items = [
+            {
+                id: 'pmm-1',
+                type: 'lost',
+                title: 'Kad Pelajar PMM & Kad ATM Maybank',
+                location: 'Perpustakaan Al-Khawarizmi PMM',
+                date: '2026-08-01',
+                description: 'Kad Matrik atas nama Muhammad Hafiz Bin Rosli (No. Pendaftaran 14DDT22F1020). Hilang di kawasan meja belajar aras bawah.',
+                reporter: 'Hafiz Rosli',
+                contact: '017-6543210',
+                image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
+                status: 'active',
+                notes: '',
+                messages: [
+                    { sender: 'Staf Perpustakaan', text: 'Salam Hafiz, ada orang serah kad serupa di kaunter depan, boleh datang semak.', time: '10:30 AM' }
+                ]
+            }
+        ];
+
+        let currentBase64Image = null;
+        let activeTab = 'grid';
+
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const customImg = document.getElementById('custom-logo-img');
+                    const defaultIcon = document.getElementById('logo-icon-default');
+                    const container = document.getElementById('logo-container');
+                    
+                    customImg.src = e.target.result;
+                    customImg.classList.remove('hidden');
+                    defaultIcon.classList.add('hidden');
+                    
+                    // Kemaskini bekas logo supaya gambar memuat secara auto full-fit tanpa ruang kosong
+                    container.classList.remove('p-2', 'bg-slate-800');
+                    container.classList.add('p-0', 'bg-transparent', 'w-auto');
+                    customImg.className = 'h-12 w-auto max-w-[180px] object-contain rounded-xl';
+                    
+                    showToast('Logo Politeknik Merlimau Melaka berjaya dikemaskini!', 'success');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current date on date input
+            const dateInput = document.getElementById('report-date');
+            if (dateInput) {
+                dateInput.value = new Date().toISOString().split('T')[0];
+            }
+
+            // Event Listeners for Filters
+            document.getElementById('search-input').addEventListener('input', renderGrid);
+            document.getElementById('filter-type').addEventListener('change', renderGrid);
+            document.getElementById('filter-location').addEventListener('change', renderGrid);
+            document.getElementById('filter-status').addEventListener('change', renderGrid);
+
+            // Initial Renders
+            updateStats();
+            renderGrid();
+            findAutoMatches();
+            renderHistoryTable();
+        });
+
+        function updateStats() {
+            const total = items.length;
+            const lost = items.filter(i => i.type === 'lost').length;
+            const found = items.filter(i => i.type === 'found').length;
+            const returned = items.filter(i => i.status === 'returned').length;
+
+            document.getElementById('stat-total').innerText = total;
+            document.getElementById('stat-lost').innerText = lost;
+            document.getElementById('stat-found').innerText = found;
+            document.getElementById('stat-returned').innerText = returned;
+        }
+
+        function switchTab(tab) {
+            activeTab = tab;
+            const gridBtn = document.getElementById('tab-grid-btn');
+            const matchBtn = document.getElementById('tab-match-btn');
+            const historyBtn = document.getElementById('tab-history-btn');
+
+            const gridView = document.getElementById('grid-view');
+            const matchView = document.getElementById('match-view');
+            const historyView = document.getElementById('history-view');
+
+            // Reset tab button states
+            gridBtn.className = "pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center space-x-2 font-semibold";
+            matchBtn.className = "pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center space-x-2 font-semibold";
+            historyBtn.className = "pb-3 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center space-x-2 font-semibold";
+
+            gridView.classList.add('hidden');
+            matchView.classList.add('hidden');
+            historyView.classList.add('hidden');
+
+            if (tab === 'grid') {
+                gridBtn.className = "pb-3 border-b-2 border-pmm-600 text-pmm-600 flex items-center space-x-2 font-bold";
+                gridView.classList.remove('hidden');
+            } else if (tab === 'match') {
+                matchBtn.className = "pb-3 border-b-2 border-amber-500 text-amber-600 flex items-center space-x-2 font-bold";
+                matchView.classList.remove('hidden');
+                findAutoMatches();
+            } else if (tab === 'history') {
+                historyBtn.className = "pb-3 border-b-2 border-emerald-600 text-emerald-600 flex items-center space-x-2 font-bold";
+                historyView.classList.remove('hidden');
+                renderHistoryTable();
+            }
+        }
+
+        function renderGrid() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+            const filterType = document.getElementById('filter-type').value;
+            const filterLocation = document.getElementById('filter-location').value;
+            const filterStatus = document.getElementById('filter-status').value;
+
+            const filtered = items.filter(item => {
+                // Aduan barang yang telah selesai (returned) secara automatik dikeluarkan dari Senarai Laporan Utama
+                if (item.status === 'returned') return false;
+
+                const matchesSearch = item.title.toLowerCase().includes(search) || 
+                                      item.description.toLowerCase().includes(search) || 
+                                      item.location.toLowerCase().includes(search) ||
+                                      item.reporter.toLowerCase().includes(search);
+                const matchesType = filterType === 'all' || item.type === filterType;
+                const matchesLocation = filterLocation === 'all' || item.location.includes(filterLocation);
+                const matchesStatus = filterStatus === 'all' || 
+                                     (filterStatus === 'active' && item.status === 'active') ||
+                                     (filterStatus === 'hep' && item.status === 'hep');
+
+                return matchesSearch && matchesType && matchesLocation && matchesStatus;
+            });
+
+            const container = document.getElementById('items-container');
+            const emptyState = document.getElementById('empty-state');
+
+            container.innerHTML = '';
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            filtered.forEach(item => {
+                const isLost = item.type === 'lost';
+                const isReturned = item.status === 'returned';
+                const isHep = item.status === 'hep';
+
+                let statusBadge = '';
+                if (isReturned) {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-lg text-[10px] font-extrabold bg-emerald-500 text-white shadow-sm"><i class="fa-solid fa-check-circle mr-1"></i>TELAH DIPULANGKAN</span>`;
+                } else if (isHep) {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-lg text-[10px] font-extrabold bg-amber-500 text-white shadow-sm"><i class="fa-solid fa-building-flag mr-1"></i>DI KAUNTER HEP</span>`;
+                } else {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-lg text-[10px] font-extrabold shadow-sm ${isLost ? 'bg-red-500 text-white' : 'bg-blue-600 text-white'}"><i class="fa-solid ${isLost ? 'fa-circle-exclamation' : 'fa-hand-holding-heart'} mr-1"></i>${isLost ? 'HILANG' : 'DIJUMPAI'}</span>`;
+                }
+
+                const cardHtml = `
+                    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                        <div>
+                            <!-- Card Image -->
+                            <div class="relative h-44 bg-slate-100 overflow-hidden">
+                                <img src="${item.image || 'https://placehold.co/600x400/e2e8f0/64748b?text=Tiada+Gambar'}" 
+                                     alt="${item.title}" 
+                                     class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                                     onerror="this.src='https://placehold.co/600x400/e2e8f0/64748b?text=Gambar+Barang+PMM'">
+                                
+                                <div class="absolute top-3 left-3 flex flex-wrap gap-1">
+                                    ${statusBadge}
+                                </div>
+
+                                <span class="absolute bottom-2 right-2 bg-slate-900/80 text-white text-[10px] px-2 py-0.5 rounded-md backdrop-blur font-medium">
+                                    <i class="fa-solid fa-location-dot text-amber-400 mr-1"></i>${item.location}
+                                </span>
+                            </div>
+
+                            <!-- Card Body -->
+                            <div class="p-4">
+                                <h3 class="font-bold text-slate-900 text-sm line-clamp-1 mb-1" title="${item.title}">
+                                    ${item.title}
+                                </h3>
+                                <p class="text-xs text-slate-500 line-clamp-2 mb-3 leading-relaxed">
+                                    ${item.description}
+                                </p>
+
+                                <div class="space-y-1.5 pt-2 border-t border-slate-100 text-[11px] text-slate-600">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-400"><i class="fa-solid fa-user text-pmm-600 mr-1"></i>Pelapor:</span>
+                                        <span class="font-bold text-slate-800">${item.reporter}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-400"><i class="fa-solid fa-phone text-pmm-600 mr-1"></i>No. Tel:</span>
+                                        <span class="font-bold text-blue-600">${item.contact}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-400"><i class="fa-regular fa-calendar text-pmm-600 mr-1"></i>Tarikh:</span>
+                                        <span class="font-medium text-slate-600">${formatDate(item.date)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Action Buttons -->
+                        <div class="p-4 pt-0 space-y-2">
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="openDetailModal('${item.id}')" 
+                                    class="py-2 px-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1">
+                                    <i class="fa-solid fa-comments text-amber-400"></i>
+                                    <span>Lihat / Mesej</span>
+                                </button>
+                                
+                                <a href="https://wa.me/6${item.contact.replace(/[^0-9]/g, '')}?text=Salam%20${encodeURIComponent(item.reporter)},%20saya%20hubungi%20berkenaan%20laporan%20'${encodeURIComponent(item.title)}'%20di%20CariKembali%20PMM." 
+                                   target="_blank"
+                                   class="py-2 px-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1">
+                                    <i class="fa-brands fa-whatsapp"></i>
+                                    <span>WhatsApp</span>
+                                </a>
+                            </div>
+
+                            <button onclick="openEditModal('${item.id}')" class="w-full py-1.5 text-[11px] font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors flex items-center justify-center space-x-1">
+                                <i class="fa-solid fa-gear text-xs"></i>
+                                <span>Kemaskini Status / Lokasi</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', cardHtml);
+            });
+        }
+
+        function previewImageUpload(event) {
+            const file = event.target.files[0];
+            const nameDisplay = document.getElementById('file-name-display');
+            const previewContainer = document.getElementById('image-preview-container');
+            const previewImage = document.getElementById('image-preview');
+
+            if (file) {
+                nameDisplay.innerText = file.name;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentBase64Image = e.target.result;
+                    previewImage.src = currentBase64Image;
+                    previewContainer.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                nameDisplay.innerText = 'Tiada fail dipilih';
+                previewContainer.classList.add('hidden');
+                currentBase64Image = null;
+            }
+        }
+
+        function handleReportSubmit(e) {
+            e.preventDefault();
+
+            const newItem = {
+                id: 'pmm-' + Date.now(),
+                type: document.getElementById('report-type').value,
+                title: document.getElementById('report-title').value,
+                location: document.getElementById('report-location').value,
+                date: document.getElementById('report-date').value,
+                description: document.getElementById('report-desc').value,
+                reporter: document.getElementById('report-reporter').value,
+                contact: document.getElementById('report-contact').value,
+                image: currentBase64Image || null,
+                status: 'active',
+                notes: '',
+                messages: []
+            };
+
+            items.unshift(newItem);
+            updateStats();
+            renderGrid();
+            findAutoMatches();
+            renderHistoryTable();
+            closeReportModal();
+
+            showToast('Laporan berjaya diterbitkan di Portal PMM!', 'success');
+        }
+
+        function findAutoMatches() {
+            const matchesContainer = document.getElementById('matches-container');
+            const noMatchesState = document.getElementById('no-matches-state');
+            const matchBadge = document.getElementById('match-badge');
+
+            matchesContainer.innerHTML = '';
+
+            const lostItems = items.filter(i => i.type === 'lost' && i.status !== 'returned');
+            const foundItems = items.filter(i => i.type === 'found' && i.status !== 'returned');
+
+            let matchCount = 0;
+
+            lostItems.forEach(lost => {
+                foundItems.forEach(found => {
+                    const locationMatch = lost.location.toLowerCase() === found.location.toLowerCase();
+                    const lostWords = lost.title.toLowerCase().split(' ');
+                    const titleMatch = lostWords.some(word => word.length > 3 && found.title.toLowerCase().includes(word));
+
+                    if (locationMatch || titleMatch) {
+                        matchCount++;
+                        const matchHtml = `
+                            <div class="bg-white border border-amber-200 rounded-2xl p-4 shadow-sm hover:border-amber-400 transition-all">
+                                <div class="flex flex-col md:flex-row items-center gap-4">
+                                    <!-- Lost Item -->
+                                    <div class="flex-1 bg-red-50 p-3 rounded-xl border border-red-100 w-full">
+                                        <span class="text-[9px] font-extrabold uppercase bg-red-500 text-white px-2 py-0.5 rounded">Barang Hilang</span>
+                                        <h4 class="font-bold text-slate-800 text-xs mt-1">${lost.title}</h4>
+                                        <p class="text-[11px] text-slate-500 mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i>${lost.location}</p>
+                                        <p class="text-[11px] font-semibold text-red-600 mt-1">Pelapor: ${lost.reporter} (${lost.contact})</p>
+                                    </div>
+
+                                    <!-- Match Badge -->
+                                    <div class="flex flex-col items-center justify-center text-amber-500 my-1 md:my-0">
+                                        <i class="fa-solid fa-arrows-rotate text-lg animate-spin-slow"></i>
+                                        <span class="text-[10px] font-bold mt-0.5 text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">Padanan Di ${lost.location}</span>
+                                    </div>
+
+                                    <!-- Found Item -->
+                                    <div class="flex-1 bg-blue-50 p-3 rounded-xl border border-blue-100 w-full">
+                                        <span class="text-[9px] font-extrabold uppercase bg-blue-600 text-white px-2 py-0.5 rounded">Barang Dijumpai</span>
+                                        <h4 class="font-bold text-slate-800 text-xs mt-1">${found.title}</h4>
+                                        <p class="text-[11px] text-slate-500 mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i>${found.location}</p>
+                                        <p class="text-[11px] font-semibold text-blue-600 mt-1">Penemu: ${found.reporter} (${found.contact})</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        matchesContainer.insertAdjacentHTML('beforeend', matchHtml);
+                    }
+                });
+            });
+
+            matchBadge.innerText = matchCount;
+
+            if (matchCount === 0) {
+                noMatchesState.classList.remove('hidden');
+            } else {
+                noMatchesState.classList.add('hidden');
+            }
+        }
+
+        function renderHistoryTable() {
+            const tableBody = document.getElementById('history-table-body');
+            const returnedItems = items.filter(i => i.status === 'returned');
+
+            tableBody.innerHTML = '';
+
+            if (returnedItems.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="p-6 text-center text-slate-400 italic">Belum ada rekod pemulangan yang disahkan.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            returnedItems.forEach(item => {
+                const row = `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-4 font-bold text-slate-800">
+                            <div class="flex items-center space-x-2">
+                                <img src="${item.image || 'https://placehold.co/100x100'}" class="w-8 h-8 rounded-lg object-cover">
+                                <span>${item.title}</span>
+                            </div>
+                        </td>
+                        <td class="p-4 text-slate-600 font-medium">${item.location}</td>
+                        <td class="p-4 text-slate-700 font-semibold">${item.reporter}</td>
+                        <td class="p-4 text-slate-600">${item.contact}</td>
+                        <td class="p-4 text-slate-500">${formatDate(item.date)}</td>
+                        <td class="p-4">
+                            <span class="px-2 py-1 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
+                                <i class="fa-solid fa-circle-check mr-1"></i>Selesai
+                            </span>
+                        </td>
+                    </tr>
+                `;
+                tableBody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+
+        function openDetailModal(id) {
+            const item = items.find(i => i.id === id);
+            if (!item) return;
+
+            const isLost = item.type === 'lost';
+            const modalBody = document.getElementById('detail-modal-body');
+
+            let messagesHtml = item.messages.map(m => `
+                <div class="mb-2 ${m.sender === 'Anda' ? 'text-right' : 'text-left'}">
+                    <span class="text-[9px] text-slate-400 font-bold block mb-0.5">${m.sender} • ${m.time}</span>
+                    <div class="inline-block px-3 py-1.5 text-xs ${m.sender === 'Anda' ? 'chat-bubble-user' : 'chat-bubble-other'}">
+                        ${m.text}
+                    </div>
+                </div>
+            `).join('');
+
+            if (item.messages.length === 0) {
+                messagesHtml = `<p class="text-center text-slate-400 text-xs my-4 italic">Belum ada mesej. Hantar mesej pertama anda di bawah.</p>`;
+            }
+
+            modalBody.innerHTML = `
+                <!-- Image Banner -->
+                <div class="relative h-48 bg-slate-900">
+                    <img src="${item.image || 'https://placehold.co/600x400/e2e8f0/64748b?text=Tiada+Gambar'}" class="w-full h-full object-cover">
+                    <button onclick="closeDetailModal()" class="absolute top-3 right-3 bg-slate-900/80 text-white rounded-full p-2 hover:bg-slate-900">
+                        <i class="fa-solid fa-xmark text-sm"></i>
+                    </button>
+                    <span class="absolute bottom-3 left-3 px-3 py-1 rounded-lg text-xs font-bold text-white shadow-md ${isLost ? 'bg-red-500' : 'bg-blue-600'}">
+                        ${isLost ? 'BARANG HILANG' : 'BARANG DIJUMPAI'}
+                    </span>
+                </div>
+
+                <!-- Info Details -->
+                <div class="p-5 space-y-4">
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-pmm-600 bg-blue-50 px-2.5 py-0.5 rounded-md border border-blue-100">
+                                Lokasi: ${item.location}
+                            </span>
+                            <span class="text-xs text-slate-400">Tarikh: ${formatDate(item.date)}</span>
+                        </div>
+                        <h2 class="text-lg font-bold text-slate-900 mt-1">${item.title}</h2>
+                    </div>
+
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs text-slate-700 leading-relaxed">
+                        <strong class="text-slate-900 block mb-0.5">Keterangan:</strong>
+                        ${item.description}
+                    </div>
+
+                    <!-- Direct Contact Numbers -->
+                    <div class="bg-blue-50 border border-blue-100 p-3 rounded-xl text-xs space-y-1">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-600 font-semibold"><i class="fa-solid fa-user text-pmm-600 mr-1"></i>Nama Pelapor:</span>
+                            <span class="font-bold text-slate-800">${item.reporter}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-600 font-semibold"><i class="fa-solid fa-phone text-pmm-600 mr-1"></i>No. Telefon Pelapor:</span>
+                            <a href="tel:${item.contact}" class="font-bold text-blue-600 underline">${item.contact}</a>
+                        </div>
+                    </div>
+
+                    <!-- IN-APP MESSENGER BOX -->
+                    <div class="border-t border-slate-200 pt-3">
+                        <h4 class="text-xs font-bold text-slate-800 mb-2 flex items-center">
+                            <i class="fa-solid fa-comments text-amber-500 mr-1.5"></i> Mesej Langsung (In-App Chat)
+                        </h4>
+                        
+                        <!-- Chat Box Container -->
+                        <div id="chat-messages-box" class="bg-slate-100/70 rounded-xl p-3 h-36 overflow-y-auto custom-scrollbar border border-slate-200">
+                            ${messagesHtml}
+                        </div>
+
+                        <!-- Chat Input Form -->
+                        <div class="flex space-x-2 mt-2">
+                            <input type="text" id="chat-input" placeholder="Tulis mesej kepada pelapor..." 
+                                class="flex-grow px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-pmm-600">
+                            <button onclick="sendChatMessage('${item.id}')" class="px-4 py-2 bg-pmm-600 hover:bg-pmm-700 text-white font-bold rounded-xl text-xs transition-all flex items-center space-x-1">
+                                <span>Hantar</span>
+                                <i class="fa-solid fa-paper-plane text-[10px]"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('detail-modal').classList.remove('hidden');
+        }
+
+        function sendChatMessage(itemId) {
+            const input = document.getElementById('chat-input');
+            const messageText = input.value.trim();
+            if (!messageText) return;
+
+            const item = items.find(i => i.id === itemId);
+            if (item) {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                item.messages.push({
+                    sender: 'Anda',
+                    text: messageText,
+                    time: timeStr
+                });
+
+                input.value = '';
+                openDetailModal(itemId); // Refresh modal view
+                showToast('Mesej berjaya dihantar!', 'info');
+            }
+        }
+
+        function openEditModal(id) {
+            const item = items.find(i => i.id === id);
+            if (!item) return;
+
+            document.getElementById('edit-item-id').value = item.id;
+            document.getElementById('edit-status').value = item.status;
+            document.getElementById('edit-location').value = item.location;
+            document.getElementById('edit-date').value = item.date;
+            document.getElementById('edit-note').value = item.notes || '';
+
+            document.getElementById('edit-modal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.add('hidden');
+        }
+
+        function handleEditSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-item-id').value;
+            const item = items.find(i => i.id === id);
+
+            if (item) {
+                item.status = document.getElementById('edit-status').value;
+                item.location = document.getElementById('edit-location').value;
+                item.date = document.getElementById('edit-date').value;
+                item.notes = document.getElementById('edit-note').value;
+
+                updateStats();
+                renderGrid();
+                findAutoMatches();
+                renderHistoryTable();
+                closeEditModal();
+
+                showToast('Maklumat barang berjaya dikemaskini!', 'success');
+            }
+        }
+
+        function openReportModal(defaultType = 'lost') {
+            setReportType(defaultType);
+            document.getElementById('report-modal').classList.remove('hidden');
+        }
+
+        function closeReportModal() {
+            document.getElementById('report-modal').classList.add('hidden');
+            document.getElementById('report-form').reset();
+            currentBase64Image = null;
+            document.getElementById('image-preview-container').classList.add('hidden');
+            document.getElementById('file-name-display').innerText = 'Tiada fail dipilih';
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detail-modal').classList.add('hidden');
+        }
+
+        function setReportType(type) {
+            document.getElementById('report-type').value = type;
+            const btnLost = document.getElementById('btn-type-lost');
+            const btnFound = document.getElementById('btn-type-found');
+
+            if (type === 'lost') {
+                btnLost.className = 'py-2 rounded-xl border text-xs font-bold transition-all flex items-center justify-center space-x-2 border-red-500 bg-red-50 text-red-600';
+                btnFound.className = 'py-2 rounded-xl border text-xs font-bold transition-all flex items-center justify-center space-x-2 border-slate-200 text-slate-600 hover:bg-slate-50';
+            } else {
+                btnFound.className = 'py-2 rounded-xl border text-xs font-bold transition-all flex items-center justify-center space-x-2 border-blue-500 bg-blue-50 text-blue-600';
+                btnLost.className = 'py-2 rounded-xl border text-xs font-bold transition-all flex items-center justify-center space-x-2 border-slate-200 text-slate-600 hover:bg-slate-50';
+            }
+        }
+
+        function resetFilters() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('filter-type').value = 'all';
+            document.getElementById('filter-location').value = 'all';
+            document.getElementById('filter-status').value = 'all';
+            renderGrid();
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return 'Tarikh N/A';
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateStr).toLocaleDateString('ms-MY', options);
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-emerald-600' : 'bg-slate-900';
+
+            toast.className = `${bgColor} text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-lg transition-all transform translate-y-2 opacity-0 flex items-center space-x-2 pointer-events-auto border border-white/10`;
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-amber-400"></i><span>${message}</span>`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
