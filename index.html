@@ -490,6 +490,28 @@
     <!-- Toast Container -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCBhQ2KZ8rtVfXKeBnqcOwa1sdAiPjkR-4",
+            authDomain: "pmm-lost-and-found-system.firebaseapp.com",
+            projectId: "pmm-lost-and-found-system",
+            storageBucket: "pmm-lost-and-found-system.firebasestorage.app",
+            messagingSenderId: "929697161091",
+            appId: "1:929697161091:web:6da99fbed7098faec960b6",
+            measurementId: "G-HED75JNFD5"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        window.firebaseDb = db;
+        window.firebaseReady = true;
+        console.log("Firebase berjaya disambungkan!");
+        console.log("Firestore berjaya dimulakan!");
+    </script>
+
     <script>
         // Data Store pre-populated with Politeknik Merlimau Melaka Campus Specific Data (Only 1 sample item)
         let items = [
@@ -750,9 +772,6 @@
         async function handleReportSubmit(e) {
             e.preventDefault();
 
-            const submitButton = e.submitter;
-            if (submitButton) submitButton.disabled = true;
-
             const newItem = {
                 id: 'pmm-' + Date.now(),
                 type: document.getElementById('report-type').value,
@@ -766,30 +785,27 @@
                 status: 'active',
                 notes: '',
                 messages: [],
-                createdAt: Date.now()
+                createdAt: Date.now(),
+                updatedAt: Date.now()
             };
 
             try {
-                if (!window.firebaseSaveReport) {
-                    throw new Error('Firebase belum siap. Sila tunggu beberapa saat dan cuba lagi.');
-                }
-
-                await window.firebaseSaveReport(newItem);
-
-                items.unshift(newItem);
-                updateStats();
-                renderGrid();
-                findAutoMatches();
-                renderHistoryTable();
-                closeReportModal();
-
-                showToast('Laporan berjaya disimpan ke Firebase!', 'success');
+                await window.firebaseDb.collection('reports').doc(newItem.id).set(newItem);
+                console.log('Laporan disimpan ke Firestore:', newItem.id);
             } catch (error) {
-                console.error('Firebase save error:', error);
-                showToast('Gagal menyimpan laporan: ' + (error.message || 'Ralat Firebase'), 'error');
-            } finally {
-                if (submitButton) submitButton.disabled = false;
+                console.error('Gagal menyimpan laporan ke Firestore:', error);
+                showToast('Firebase gagal menyimpan laporan. Semak Firestore Rules.', 'error');
+                return;
             }
+
+            items.unshift(newItem);
+            updateStats();
+            renderGrid();
+            findAutoMatches();
+            renderHistoryTable();
+            closeReportModal();
+
+            showToast('Laporan berjaya diterbitkan dan disimpan ke Firebase!', 'success');
         }
 
         function findAutoMatches() {
@@ -990,27 +1006,28 @@
                 const now = new Date();
                 const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-                const newMessage = {
+                item.messages = item.messages || [];
+                item.messages.push({
                     sender: 'Anda',
                     text: messageText,
                     time: timeStr
-                };
-
-                item.messages = item.messages || [];
-                item.messages.push(newMessage);
+                });
+                item.updatedAt = Date.now();
 
                 try {
-                    if (window.firebaseUpdateReport) {
-                        await window.firebaseUpdateReport(itemId, { messages: item.messages });
-                    }
-                    input.value = '';
-                    openDetailModal(itemId);
-                    showToast('Mesej berjaya dihantar!', 'info');
+                    await window.firebaseDb.collection('reports').doc(itemId).set({
+                        messages: item.messages,
+                        updatedAt: item.updatedAt
+                    }, { merge: true });
                 } catch (error) {
-                    item.messages.pop();
-                    console.error('Firebase chat error:', error);
+                    console.error('Gagal menyimpan mesej ke Firestore:', error);
                     showToast('Mesej gagal disimpan ke Firebase.', 'error');
+                    return;
                 }
+
+                input.value = '';
+                openDetailModal(itemId);
+                showToast('Mesej berjaya dihantar!', 'info');
             }
         }
 
@@ -1041,35 +1058,26 @@
                     status: document.getElementById('edit-status').value,
                     location: document.getElementById('edit-location').value,
                     date: document.getElementById('edit-date').value,
-                    notes: document.getElementById('edit-note').value
+                    notes: document.getElementById('edit-note').value,
+                    updatedAt: Date.now()
                 };
-
-                const previous = {
-                    status: item.status,
-                    location: item.location,
-                    date: item.date,
-                    notes: item.notes
-                };
-
-                Object.assign(item, updates);
 
                 try {
-                    if (window.firebaseUpdateReport) {
-                        await window.firebaseUpdateReport(id, updates);
-                    }
-
-                    updateStats();
-                    renderGrid();
-                    findAutoMatches();
-                    renderHistoryTable();
-                    closeEditModal();
-
-                    showToast('Maklumat barang berjaya dikemaskini!', 'success');
+                    await window.firebaseDb.collection('reports').doc(id).set(updates, { merge: true });
                 } catch (error) {
-                    Object.assign(item, previous);
-                    console.error('Firebase update error:', error);
-                    showToast('Gagal menyimpan kemaskini ke Firebase.', 'error');
+                    console.error('Gagal mengemaskini Firestore:', error);
+                    showToast('Maklumat gagal dikemaskini di Firebase.', 'error');
+                    return;
                 }
+
+                Object.assign(item, updates);
+                updateStats();
+                renderGrid();
+                findAutoMatches();
+                renderHistoryTable();
+                closeEditModal();
+
+                showToast('Maklumat barang berjaya dikemaskini!', 'success');
             }
         }
 
@@ -1137,83 +1145,40 @@
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
-    </script>
+        async function loadReportsFromFirebase() {
+            try {
+                const snapshot = await window.firebaseDb.collection('reports').get();
+                const remoteItems = [];
 
-    <!-- Firebase Firestore integration -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-        import {
-            getFirestore,
-            collection,
-            getDocs,
-            setDoc,
-            doc,
-            updateDoc
-        } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+                snapshot.forEach(docSnap => {
+                    remoteItems.push({ id: docSnap.id, ...docSnap.data() });
+                });
 
-        const firebaseConfig = {
-    apiKey: "AIzaSyCBhQ2KZ8rtVfXKeBnqcOwa1sdAiPjkR-4",
-    authDomain: "pmm-lost-and-found-system.firebaseapp.com",
-    projectId: "pmm-lost-and-found-system",
-    storageBucket: "pmm-lost-and-found-system.firebasestorage.app",
-    messagingSenderId: "929697161091",
-    appId: "1:929697161091:web:6da99fbed7098faec960b6",
-    measurementId: "G-HED75JNFD5"
-};
+                remoteItems.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+                const remoteIds = new Set(remoteItems.map(item => item.id));
+                const localOnlyItems = items.filter(item => !remoteIds.has(item.id));
+                items = [...remoteItems, ...localOnlyItems];
 
-        // Expose a promise so the page knows Firebase is ready.
-        let resolveFirebaseReady;
-        window.firebaseReady = new Promise(resolve => {
-            resolveFirebaseReady = resolve;
-        });
+                updateStats();
+                renderGrid();
+                findAutoMatches();
+                renderHistoryTable();
 
-        window.firebaseSaveReport = async function(item) {
-            await setDoc(doc(db, "reports", item.id), item);
-        };
-
-        window.firebaseUpdateReport = async function(id, updates) {
-            await updateDoc(doc(db, "reports", id), updates);
-        };
-
-        window.loadReportsFromFirebase = async function() {
-            const snapshot = await getDocs(collection(db, "reports"));
-            const remoteItems = [];
-
-            snapshot.forEach((docSnap) => {
-                remoteItems.push({ id: docSnap.id, ...docSnap.data() });
-            });
-
-            remoteItems.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-
-            // Keep the original sample item if it is not already in Firestore,
-            // then add all persisted reports from Firebase.
-            const remoteIds = new Set(remoteItems.map(item => item.id));
-            const localOnlyItems = items.filter(item => !remoteIds.has(item.id));
-
-            items = [...remoteItems, ...localOnlyItems];
-
-            updateStats();
-            renderGrid();
-            findAutoMatches();
-            renderHistoryTable();
-        };
-
-        resolveFirebaseReady();
-
-        // Load saved reports as soon as Firebase is initialized.
-        try {
-            await window.loadReportsFromFirebase();
-        } catch (error) {
-            console.error("Firebase load error:", error);
-            // Keep the page usable with the original local sample if Firebase is unavailable.
-            if (typeof showToast === "function") {
-                showToast("Firebase belum dapat memuatkan data. Semak sambungan/rules Firebase.", "error");
+                console.log(`Firebase: ${remoteItems.length} laporan dimuat.`);
+            } catch (error) {
+                console.error('Firebase gagal memuat laporan:', error);
+                showToast('Firebase belum dapat membaca laporan. Semak Firestore Rules.', 'error');
             }
         }
-    </script>
 
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                if (window.firebaseReady) {
+                    loadReportsFromFirebase();
+                }
+            }, 300);
+        });
+    </script>
 </body>
 </html>
