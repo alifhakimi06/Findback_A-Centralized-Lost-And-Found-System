@@ -180,7 +180,7 @@
                 <!-- Search Input -->
                 <div class="relative flex-grow">
                     <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs sm:text-sm"></i>
-                    <input type="text" id="search-input" placeholder="Cari barang, lokasi (Cth: Kafeteria, JTMK, Perpustakaan)..." 
+                    <input type="text" id="search-input" placeholder="Cari barang, lokasi (Cth: Bilik Kuliah, Lab, Pejabat)..."
                         class="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-pmm-600 text-xs sm:text-sm">
                 </div>
 
@@ -194,20 +194,39 @@
 
                     <select id="filter-location" class="px-3 py-2 sm:py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-pmm-600">
                         <option value="all">Semua Lokasi PMM</option>
-                        <option value="Perpustakaan Al-Khawarizmi PMM">Perpustakaan Al-Khawarizmi PMM</option>
-                        <option value="Kafeteria PMM">Kafeteria PMM</option>
-                        <option value="Dewan Platinum PMM">Dewan Platinum PMM</option>
-                        <option value="JKA">Jabatan Kejuruteraan Awam (JKA)</option>
-                        <option value="JKE">Jabatan Kejuruteraan Elektrik (JKE)</option>
-                        <option value="JKM">Jabatan Kejuruteraan Mekanikal (JKM)</option>
-                        <option value="JP">Jabatan Perdagangan (JP)</option>
-                        <option value="JPH">Jabatan Pelancongan & Hospitaliti (JPH)</option>
-                        <option value="JMSK">Jabatan Matematik, Sains & Komputer (JMSK)</option>
-                        <option value="Kamsis PMM">Kolej Kediaman (Kamsis PMM)</option>
-                        <option value="Pusat Sukan PMM">Pusat Sukan & Padang PMM</option>
-                        <option value="Pusat Islam PMM">Pusat Islam / Surau PMM</option>
-                        <option value="Kaunter HEP">Bangunan Pentadbiran / Kaunter HEP</option>
-                        <option value="Lain-lain">Lain-lain Lokasi di PMM</option>
+                        <option value="Bilik Kuliah 1">Bilik Kuliah 1</option>
+                        <option value="Bilik Kuliah 2">Bilik Kuliah 2</option>
+                        <option value="Bilik Kuliah 3">Bilik Kuliah 3</option>
+                        <option value="Bilik Kuliah 4">Bilik Kuliah 4</option>
+                        <option value="Bilik Kuliah 5">Bilik Kuliah 5</option>
+                        <option value="Bilik Kuliah 6">Bilik Kuliah 6</option>
+                        <option value="Bilik Kuliah 7">Bilik Kuliah 7</option>
+                        <option value="Bilik Kuliah 8">Bilik Kuliah 8</option>
+                        <option value="Bilik Kuliah 9">Bilik Kuliah 9</option>
+                        <option value="Bilik Kuliah 10">Bilik Kuliah 10</option>
+                        <option value="Bilik Kuliah 11">Bilik Kuliah 11</option>
+                        <option value="Bilik Kuliah 12">Bilik Kuliah 12</option>
+                        <option value="Bilik Kuliah 13">Bilik Kuliah 13</option>
+                        <option value="Bilik Kuliah 14">Bilik Kuliah 14</option>
+                        <option value="Bilik Kuliah 15">Bilik Kuliah 15</option>
+                        <option value="Bilik Kuliah 16">Bilik Kuliah 16</option>
+                        <option value="Dewan Kuliah JP">Dewan Kuliah JP</option>
+                        <option value="Studio">Studio</option>
+                        <option value="Pejabat Aras 1">Pejabat Aras 1</option>
+                        <option value="Pejabat Aras 2">Pejabat Aras 2</option>
+                        <option value="Pejabat Aras 3">Pejabat Aras 3</option>
+                        <option value="Lab 1">Lab 1</option>
+                        <option value="Lab 2">Lab 2</option>
+                        <option value="Tandas Aras 1">Tandas Aras 1</option>
+                        <option value="Tandas Aras 2">Tandas Aras 2</option>
+                        <option value="Tandas Aras 3">Tandas Aras 3</option>
+                        <option value="TEC JP">TEC JP</option>
+                        <option value="MQA">MQA</option>
+                        <option value="Bilik Usahasama">Bilik Usahasama</option>
+                        <option value="Koperasi JP">Koperasi JP</option>
+                        <option value="Bilik Seminar">Bilik Seminar</option>
+                        <option value="Halaman JP">Halaman JP</option>
+                        <option value="Unit Keusahawanan">Unit Keusahawanan</option>
                     </select>
 
                     <select id="filter-status" class="px-3 py-2 sm:py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-pmm-600">
@@ -355,20 +374,39 @@
                         <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1">Lokasi Kejadian (PMM) *</label>
                         <select id="report-location" required class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-pmm-600">
                             <option value="">Pilih Lokasi Di PMM</option>
-                            <option value="Perpustakaan Al-Khawarizmi PMM">Perpustakaan Al-Khawarizmi PMM</option>
-                            <option value="Kafeteria PMM">Kafeteria PMM</option>
-                            <option value="Dewan Platinum PMM">Dewan Platinum PMM</option>
-                            <option value="JKA - Jabatan Kejuruteraan Awam">Jabatan Kejuruteraan Awam (JKA)</option>
-                            <option value="JKE - Jabatan Kejuruteraan Elektrik">Jabatan Kejuruteraan Elektrik (JKE)</option>
-                            <option value="JKM - Jabatan Kejuruteraan Mekanikal">Jabatan Kejuruteraan Mekanikal (JKM)</option>
-                            <option value="JP - Jabatan Perdagangan">Jabatan Perdagangan (JP)</option>
-                            <option value="JPH - Jabatan Pelancongan & Hospitaliti">Jabatan Pelancongan & Hospitaliti (JPH)</option>
-                            <option value="JMSK - Jabatan Matematik, Sains & Komputer">Jabatan Matematik, Sains & Komputer (JMSK)</option>
-                            <option value="Kamsis PMM">Kolej Kediaman (Kamsis PMM)</option>
-                            <option value="Pusat Sukan PMM">Pusat Sukan & Padang PMM</option>
-                            <option value="Pusat Islam PMM">Pusat Islam / Surau PMM</option>
-                            <option value="Kaunter HEP PMM">Diserahkan ke Kaunter HEP PMM</option>
-                            <option value="Lain-lain Lokasi PMM">Lain-lain Lokasi di PMM</option>
+                            <option value="Bilik Kuliah 1">Bilik Kuliah 1</option>
+                            <option value="Bilik Kuliah 2">Bilik Kuliah 2</option>
+                            <option value="Bilik Kuliah 3">Bilik Kuliah 3</option>
+                            <option value="Bilik Kuliah 4">Bilik Kuliah 4</option>
+                            <option value="Bilik Kuliah 5">Bilik Kuliah 5</option>
+                            <option value="Bilik Kuliah 6">Bilik Kuliah 6</option>
+                            <option value="Bilik Kuliah 7">Bilik Kuliah 7</option>
+                            <option value="Bilik Kuliah 8">Bilik Kuliah 8</option>
+                            <option value="Bilik Kuliah 9">Bilik Kuliah 9</option>
+                            <option value="Bilik Kuliah 10">Bilik Kuliah 10</option>
+                            <option value="Bilik Kuliah 11">Bilik Kuliah 11</option>
+                            <option value="Bilik Kuliah 12">Bilik Kuliah 12</option>
+                            <option value="Bilik Kuliah 13">Bilik Kuliah 13</option>
+                            <option value="Bilik Kuliah 14">Bilik Kuliah 14</option>
+                            <option value="Bilik Kuliah 15">Bilik Kuliah 15</option>
+                            <option value="Bilik Kuliah 16">Bilik Kuliah 16</option>
+                            <option value="Dewan Kuliah JP">Dewan Kuliah JP</option>
+                            <option value="Studio">Studio</option>
+                            <option value="Pejabat Aras 1">Pejabat Aras 1</option>
+                            <option value="Pejabat Aras 2">Pejabat Aras 2</option>
+                            <option value="Pejabat Aras 3">Pejabat Aras 3</option>
+                            <option value="Lab 1">Lab 1</option>
+                            <option value="Lab 2">Lab 2</option>
+                            <option value="Tandas Aras 1">Tandas Aras 1</option>
+                            <option value="Tandas Aras 2">Tandas Aras 2</option>
+                            <option value="Tandas Aras 3">Tandas Aras 3</option>
+                            <option value="TEC JP">TEC JP</option>
+                            <option value="MQA">MQA</option>
+                            <option value="Bilik Usahasama">Bilik Usahasama</option>
+                            <option value="Koperasi JP">Koperasi JP</option>
+                            <option value="Bilik Seminar">Bilik Seminar</option>
+                            <option value="Halaman JP">Halaman JP</option>
+                            <option value="Unit Keusahawanan">Unit Keusahawanan</option>
                         </select>
                     </div>
                     <div>
@@ -519,7 +557,7 @@
                 id: 'pmm-1',
                 type: 'lost',
                 title: 'Kad Pelajar PMM & Kad ATM Maybank',
-                location: 'Perpustakaan Al-Khawarizmi PMM',
+                location: 'Bilik Kuliah 1',
                 date: '2026-08-01',
                 description: 'Kad Matrik atas nama Muhammad Hafiz Bin Rosli (No. Pendaftaran 14DDT22F1020). Hilang di kawasan meja belajar aras bawah.',
                 reporter: 'Hafiz Rosli',
