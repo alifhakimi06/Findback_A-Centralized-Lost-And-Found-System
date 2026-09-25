@@ -363,7 +363,7 @@
 
                 <!-- Tajuk Barang -->
                 <div>
-                    <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1">Nama / Tajuk Barang *</label>
+                    <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1">Nama Barang</label>
                     <input type="text" id="report-title" required placeholder="Cth: Kad Pelajar Matrix / Pendrive SanDisk 32GB / Kunci Motor" 
                         class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-pmm-600">
                 </div>
@@ -371,7 +371,7 @@
                 <!-- Lokasi PMM & Tarikh -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1">Lokasi Kejadian (PMM) *</label>
+                        <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1">Lokasi (Kehilangan/Penemuan) </label>
                         <select id="report-location" required class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-pmm-600">
                             <option value="">Pilih Lokasi Di PMM</option>
                             <option value="Bilik Kuliah 1">Bilik Kuliah 1</option>
@@ -410,7 +410,7 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1">Tarikh Kejadian *</label>
+                        <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1">Tarikh (Kehilangan/Penemuan) </label>
                         <input type="date" id="report-date" required class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-pmm-600">
                     </div>
                 </div>
@@ -424,7 +424,7 @@
                             <span>Pilih Gambar Dari Peranti</span>
                             <input type="file" id="report-image-file" accept="image/*" class="hidden" onchange="previewImageUpload(event)">
                         </label>
-                        <span id="file-name-display" class="text-xs text-slate-400 italic">*Dilarang memuat naik barangan berharga contoh:<br>telefon, jam tangan dan lain-lain<br>Anda hanya perlu memuat naik gambar dan lokasi barang yang telah dijumpai.</span>
+                        <span id="file-name-display" class="text-xs text-slate-400 italic">*Tidak digalakkan memaparkan jenama produk untuk tujuan verifikasi .</span>
                     </div>
                     <!-- Image Preview Thumbnail -->
                     <div id="image-preview-container" class="mt-2 hidden">
@@ -434,8 +434,8 @@
 
                 <!-- Keterangan Lanjut -->
                 <div>
-                    <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1">Keterangan / Ciri Unik *</label>
-                    <textarea id="report-desc" rows="3" required placeholder="dilarang menerangkan ciri-ciri barang/jenama" 
+                    <label class="block text-[11px] font-extrabold uppercase text-slate-500 mb-1">Keterangan / Ciri Barang (Jika perlu) </label>
+                    <textarea id="report-desc" rows="3" placeholder="Tidak digalakkan untuk menyatakan jenama produk bagi tujuan verifikasi" 
                         class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-pmm-600"></textarea>
                 </div>
 
@@ -446,13 +446,13 @@
                     </h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-[10px] font-extrabold uppercase text-slate-500 mb-1">Nama Pelapor *</label>
-                            <input type="text" id="report-reporter" required placeholder="Cth: Amirul (Pelajar) / Pn. Azlina (Pensyarah)" 
+                            <label class="block text-[10px] font-extrabold uppercase text-slate-500 mb-1">Nama Pelapor </label>
+                            <input type="text" id="report-reporter" placeholder="Cth: Amirul (Pelajar) / Pn. Azlina (Pensyarah)" 
                                 class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-pmm-600">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-extrabold uppercase text-slate-500 mb-1">No. Telefon / WhatsApp *</label>
-                            <input type="tel" id="report-contact" required placeholder="01X-XXXXXXX" 
+                            <label class="block text-[10px] font-extrabold uppercase text-slate-500 mb-1">No. Telefon / WhatsApp </label>
+                            <input type="tel" id="report-contact" placeholder="01X-XXXXXXX" 
                                 class="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-pmm-600">
                         </div>
                     </div>
